@@ -1,0 +1,37 @@
+from classes.BoundingBox import BoundingBox
+from PIL import Image, ImageDraw
+
+class ImageVisualizer:
+    def __init__(self, image_path):
+        self.image = Image.open(image_path)
+        self.draw = ImageDraw.Draw(self.image)
+
+    def highlight_bounding_boxes(self, bounding_boxes, color="red"):
+        for bbox in bounding_boxes:
+            r_min, c_min, r_max, c_max = bbox.get_coordinates()
+            self.draw.rectangle([c_min, r_min, c_max, r_max], outline=color, width=2)
+
+    def show_image(self):
+        self.image.show()
+
+    def close_image(self):
+        self.image.close()
+
+
+if __name__ == "__main__":
+
+  # Create an instance of the ImageVisualizer class
+  image_path = "/media/william/NVME/projects/malaria-pibiti/1_entrada/malaria/malaria/images/0a3b53c7-e7ab-4135-80aa-fd2079d727d6.jpg"
+  visualizer = ImageVisualizer(image_path)
+
+  # List of bounding boxes to highlight
+  bounding_boxes = [BoundingBox({"r": 100, "c": 200}, {"r": 300, "c": 400})]
+
+  # Highlight the bounding boxes on the image
+  visualizer.highlight_bounding_boxes(bounding_boxes)
+
+  # Show the image with highlighted bounding boxes
+  visualizer.show_image()
+
+  # Close the image when you're done
+  visualizer.close_image()

@@ -1,1 +1,2 @@
 # malaria-pibiti
+Repositório para armazenar o progesso do projeto de Auxilio ao diagnostico de malaria (plasmodium) usando imagens microscopicas: automatizacao usando aprendizado de maquina e desenvolvimento de aplicacao WEB.
