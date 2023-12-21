@@ -56,8 +56,6 @@ from pathlib import Path
 
 path_project = Path().absolute().parent
 path_act  = Path().absolute()
-
-
 save_metrics_path = path_project / '6_resultados' / "Metrics"
 save_csvs_path = save_metrics_path / "csvs"
 save_nets_path = save_metrics_path / "nets"
@@ -107,6 +105,8 @@ epoch                   = 50
 lr_reduce = ReduceLROnPlateau(monitor='val_accuracy', factor=0.1, min_delta=alpha, patience=3, verbose=0)
 early = tf.keras.callbacks.EarlyStopping(monitor='val_accuracy', patience=5, mode='max')
 
+
+#functions metrics personalized
 def recall(y_true, y_pred):
     true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
     possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
@@ -166,7 +166,7 @@ METRICS = [
 
 
    
-#Funções importantes
+#Calculations meansures
 def calculateMeasures(history_net, folder, methodName, denseNum, dropOut, freezePercentage, batchsize):
     metrics = pd.DataFrame()
     idx = np.argmax(history_net.history['val_accuracy'])
@@ -219,7 +219,7 @@ def calculateMeasures(history_net, folder, methodName, denseNum, dropOut, freeze
     else:
         metrics.to_csv(os.path.join(save_csvs_path, methodName + refined + '.csv'), sep=',', index=False)  
 
-
+# load image
 def select_image(filename, data_set_name):
     # print(filename)
     filename =  path_project / '1_entrada' / f"{data_set_name }/{str(filename)}"
@@ -334,8 +334,9 @@ def makemodel(folder, methodName, denseNum, dropOut, freezePercentage):
         layer.trainable =  True
 
     # folder + '_' +
-    filepath = save_nets_path /  methodName / '_weights' / f"{partition}.hdf5"
-    checkpoint = ModelCheckpoint(filepath, monitor='val_accuracy', verbose=0, save_best_only=True, mode='max')
+    filepath = save_nets_path / methodName /  '_weights' / f"{partition}.hdf5"
+    print(filepath)
+    checkpoint = ModelCheckpoint(str(filepath), monitor='val_accuracy', verbose=0, save_best_only=True, mode='max')
     return model, checkpoint
 
 
