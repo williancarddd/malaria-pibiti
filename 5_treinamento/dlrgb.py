@@ -1,101 +1,37 @@
-from operator import index
-from this import d
 import tensorflow as tf
-config = tf.compat.v1.ConfigProto(gpu_options=tf.compat.v1.GPUOptions(allow_growth=True))
-sess = tf.compat.v1.Session(config=config)
-from keras import backend as K
-from PIL import Image
 import pandas as pd
 import csv
-import glob
 import time
 import datetime
-import matplotlib.pyplot as plt
-from tensorflow.keras.preprocessing import image
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
-from tensorflow.keras.models import Model
 import math
-from collections import Counter
 import numpy as np
-
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelBinarizer
-from tensorflow.keras.utils import to_categorical
-#pip install imbalanced-learn
-from imblearn.under_sampling import RandomUnderSampler
-from collections import Counter
-from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
-
-from sklearn.metrics import roc_curve, auc, roc_auc_score, confusion_matrix
-from tensorflow.keras.models import load_model
-
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKCYAN = '\033[96m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-
-tf.config.list_physical_devices('GPU')
-
-# gpu_options = tf.compat.v1.GPUOptions(per_process_gpu_memory_fraction=0.7)
-
-# tf.compat.v1.Session(config=tf.compat.v1.ConfigProto(gpu_options=gpu_options))
-
 import os
+from PIL import Image
+from tensorflow.keras.utils import to_categorical
+from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
+from sklearn.metrics import roc_curve, roc_auc_score, confusion_matrix
+from tensorflow.keras.models import load_model
+from classes.colors import bcolors
+from classes.paths  import Paths
+from classes.metrics import Metrics
+
+config = tf.compat.v1.ConfigProto(gpu_options=tf.compat.v1.GPUOptions(allow_growth=True))
+sess = tf.compat.v1.Session(config=config)
+tf.config.list_physical_devices('GPU')
 os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'false'
 os.environ['CUDA_VISIBLE_DEVICES'] = "0"
 
-#Variaveis globais
-
-from pathlib import Path
-
-path_project = Path().absolute().parent
-path_act  = Path().absolute()
-save_metrics_path = path_project / '6_resultados' / "Metrics"
-save_csvs_path = save_metrics_path / "csvs"
-save_nets_path = save_metrics_path / "nets"
-base_path_parts = path_project / "1_entrada" / "partitions"
-files_parts = sorted(os.listdir(base_path_parts))
-print(files_parts)
+# Variaveis globais
 runtimeTrain = 0.0
 runtimeTest = 0.0
-
-# , 'VGG16', 'VGG19', 'ResNet50', 'ResNet50V2', 'ResNet101', 'ResNet101V2', 'ResNet152', 'ResNet152V2', \
-#     , 'InceptionResNetV2', , 'MobileNetV2', 'DenseNet121','DenseNet169', , 'EfficientNetB0', 'EfficientNetB1', 
-
-#    ,  \
-# 'EfficientNetV2B0', 'EfficientNetV2B1', 'EfficientNetV2B2', 'EfficientNetV2B3', 'EfficientNetV2S', 'EfficientNetV2M', 'EfficientNetV2L', \
-# 'EfficientNetV2B0', 'EfficientNetB2', 'EfficientNetB3', , 'EfficientNetB5', 'EfficientNetB6', 'EfficientNetB7'
-
-
-
-# Refinar:  
-# 'DenseNet201':    Dense 356 Dropout 0.4  Freeze 0.2
-# 'InceptionV3':    Dense 256 Dropout 0.2  Freeze 0.3 
-# 'MobileNetV2':    Dense 512 Dropout 0.3  Freeze 0.35
-# 'MobileNetV3':    Dense 512 Dropout 0.3  Freeze 0.35
-# 'Xception':       Dense 512 Dropout 0.4  Freeze 0.2
-# 'ResNet101V2':    Dense 128 Dropout 0.3  Freeze 0.2 
-# 'EfficientNetB4': Dense 128 Dropout 0.2  Freeze 0.4
-
-
-# 'ResNet50V2':     Dense     Dropout   Freeze 
-# 'MobileNet':      Dense    Dropout   Freeze 
-# 'ResNet152V2':    Dense     Dropout   Freeze 
+paths = Paths.get_project_paths()
+metrics = Metrics
 
 
 methodsNames = ['MobileNetV2', 'DenseNet201', 'InceptionV3']
-# 'EfficientNetB4','InceptionV3', 'MobileNetV2', 'MobileNetV3', 'Xception'] 
-# 'Resnet101V2', 'ResNet50V2', 'ResNet152V2', 'MobileNet'
-# 'VGG16', 'VGG19', 'ResNet50', 'ResNet50V2', 'ResNet101', 'ResNet101V2', 'ResNet152', 'ResNet152V2', 'DenseNet201', 'Xception', 'EfficientNetB4'
 
 
-##Parametros da CNNs
+# Parametros da CNNs
 batch_size              = 32
 input_shape             = (128, 128, 3)
 input_shape_crop_or_pad = (128, 128, 3)
@@ -106,49 +42,6 @@ lr_reduce = ReduceLROnPlateau(monitor='val_accuracy', factor=0.1, min_delta=alph
 early = tf.keras.callbacks.EarlyStopping(monitor='val_accuracy', patience=5, mode='max')
 
 
-#functions metrics personalized
-def recall(y_true, y_pred):
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    possible_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
-    recall_keras = true_positives / (possible_positives + K.epsilon())
-    return recall_keras
-
-
-def precision(y_true, y_pred):
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
-    precision_keras = true_positives / (predicted_positives + K.epsilon())
-    return precision_keras
-
-def specificity(y_true, y_pred):
-    tn = K.sum(K.round(K.clip((1 - y_true) * (1 - y_pred), 0, 1)))
-    fp = K.sum(K.round(K.clip((1 - y_true) * y_pred, 0, 1)))
-    return tn / (tn + fp + K.epsilon())
-
-def f1_score(y_true, y_pred):
-    p = precision(y_true, y_pred)
-    r = recall(y_true, y_pred)
-    return 2 * ((p * r) / (p + r + K.epsilon()))
-
-# Netavie Predictive Error
-def npv(y_true, y_pred):
-    tn = K.sum(K.round(K.clip((1 - y_true) * (1 - y_pred), 0, 1)))
-    fn = K.sum(K.round(K.clip(y_true * (1 - y_pred), 0, 1)))
-    return tn / (tn + fn + K.epsilon())
-
-# Matthews Correlation_Coefficient
-def mcc(y_true, y_pred):
-    tp = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    tn = K.sum(K.round(K.clip((1 - y_true) * (1 - y_pred), 0, 1)))
-    fp = K.sum(K.round(K.clip((1 - y_true) * y_pred, 0, 1)))
-    fn = K.sum(K.round(K.clip(y_true * (1 - y_pred), 0, 1)))
-
-    num = tp * tn - fp * fn
-    den = (tp + fp) * (tp + fn) * (tn + fp) * (tn + fn)
-    return num / K.sqrt(den + K.epsilon())
-
-
-
 METRICS = [
     "accuracy",
     tf.keras.metrics.TruePositives(name='TP',thresholds=0.5),
@@ -157,15 +50,13 @@ METRICS = [
     tf.keras.metrics.FalseNegatives(name='FN',thresholds=0.5), 
     tf.keras.metrics.Precision(name='precision'),
     tf.keras.metrics.Recall(name='recall'),
-    specificity,
-    f1_score,
-    npv,
-    mcc,
+    metrics.pecificity,
+    metrics.f1_score,
+    metrics.npv,
+    metrics.mcc,
     tf.keras.metrics.AUC(name='auc',  curve='ROC'),
 ]
 
-
-   
 #Calculations meansures
 def calculateMeasures(history_net, folder, methodName, denseNum, dropOut, freezePercentage, batchsize):
     metrics = pd.DataFrame()
@@ -179,7 +70,6 @@ def calculateMeasures(history_net, folder, methodName, denseNum, dropOut, freeze
     metrics['BatchSize'] = [batchsize]
 
     # TEST RESULTS
-    
     metrics['epoch'] = [idx]
     metrics['accuracy'] = history_net.history['accuracy'][idx]
     metrics['precision'] = history_net.history['precision'][idx]
@@ -194,8 +84,8 @@ def calculateMeasures(history_net, folder, methodName, denseNum, dropOut, freeze
     metrics['FP'] = history_net.history['FP'][idx]
     metrics['FN'] = history_net.history['FN'][idx]
     metrics['runtime'] = [runtimeTrain]
-    # TRAIN RESULTS
 
+    # TRAIN RESULTS
     metrics['val_accuracy'] = history_net.history['val_accuracy'][idx]
     metrics['val_precision'] = history_net.history['val_precision'][idx]
     metrics['val_sensitivity'] = history_net.history['val_recall'][idx]
@@ -214,15 +104,15 @@ def calculateMeasures(history_net, folder, methodName, denseNum, dropOut, freeze
 
     refined = '_refined'
 
-    if os.path.exists(os.path.join(save_csvs_path, methodName + refined + '.csv')):
-        metrics.to_csv(os.path.join(save_csvs_path, methodName + refined + '.csv'), sep=',', mode='a', index=False, header=False)
+    if os.path.exists(os.path.join(paths['csvs'], methodName + refined + '.csv')):
+        metrics.to_csv(os.path.join(paths['csvs'], methodName + refined + '.csv'), sep=',', mode='a', index=False, header=False)
     else:
-        metrics.to_csv(os.path.join(save_csvs_path, methodName + refined + '.csv'), sep=',', index=False)  
+        metrics.to_csv(os.path.join(paths['csvs'], methodName + refined + '.csv'), sep=',', index=False)  
 
 # load image
 def select_image(filename, data_set_name):
     # print(filename)
-    filename =  path_project / '1_entrada' / f"{data_set_name }/{str(filename)}"
+    filename =  paths['project'] / '1_entrada' / f"{data_set_name }/{str(filename)}"
     image = Image.open(filename) # load image from file
     image = np.asarray(image.convert('RGB')) # convert to RGB, if this option needed
     image = tf.image.resize_with_crop_or_pad(image, input_shape_crop_or_pad[0],input_shape_crop_or_pad[1]) # Deixa imagem quadrada 
@@ -230,34 +120,12 @@ def select_image(filename, data_set_name):
     #print(image.shape)
     return np.asarray(image)
 
-# def load_dataset(base_path):
-#     # base_path.replace("D:/", "C:/")
-#     imagens, labels = list(), list()
-#     classes = os.listdir(base_path)
-#     for c in classes:
-#         for p in glob.glob(os.path.join(base_path, c, '*.bmp')):
-#             imagens.append(p)
-#             labels.append(c)
-    
-#     return np.asarray(imagens), labels
-
-# def load_dataset_part(folder_name):
-    
-#     train_X, train_Y = load_dataset(os.path.join(folder_name, "train"))
-#     test_x, test_y = load_dataset(os.path.join(folder_name, "test"))
-
-#     #images = np.array(images)/255.0
-#     train_Y, test_y = np.array(train_Y), np.array(test_y) 
-    
-#     #(train_X, test_x, train_Y, test_y) = train_test_split(images, labels, test_size=0.20, stratify=labels)
-    
-#     return train_X, test_x, train_Y, test_y
 
 
 def load_dataset(partition, data_set_name):
     TrainImages, TestImages, TrainLabels, TestLabels = list(), list(), list(), list()
 
-    fName = base_path_parts / f"{partition}.csv"
+    fName = partition['partitions'] / f"{partition}.csv"
     print(fName)
 
     # Read Partition Details
@@ -283,32 +151,20 @@ def load_dataset(partition, data_set_name):
     TrainImages = np.asarray(TrainImages)
     TestImages = np.asarray(TestImages)
 
-    # #Balanceameto dos dados de treino
-    # undersample = RandomUnderSampler(sampling_strategy=0.1)
-    # TrainImages, TrainLabels = undersample.fit_resample(TrainImages.reshape(-1,1), TrainLabels)
     TrainImages = [select_image(p, data_set_name) for p in TrainImages]
     TrainImages = np.array(TrainImages)/255.0
-    # print(TrainImages.shape)
 
-    # #Balanceamento dos dados de test
-    # undersample = RandomUnderSampler(sampling_strategy=0.1)
-    # TestImages, TestLabels = undersample.fit_resample(TestImages.reshape(-1,1), TestLabels)
+
     TestImages = [select_image(p, data_set_name) for p in TestImages]
     TestImages = np.array(TestImages)/255.0
-    # print(TestImages.shape)
 
     print(sum(TrainLabels))
     print(sum(TestLabels))
     
-    lb = LabelBinarizer()
     TrainLabels = to_categorical( np.array(TrainLabels), num_classes=7)
     TestLabels  = to_categorical( np.array(TestLabels ), num_classes=7)
     
-    # print(TrainLabels)
-    # print(TestLabels)
-    # print(TrainLabels.shape)
-    # print(TestLabels.shape)
-    
+   
     return TrainImages, TrainLabels, TestImages , TestLabels
 
 def makemodel(folder, methodName, denseNum, dropOut, freezePercentage):
@@ -328,27 +184,22 @@ def makemodel(folder, methodName, denseNum, dropOut, freezePercentage):
     model.add(tf.keras.layers.Flatten())
     model.add(tf.keras.layers.Dropout(dropOut))
     model.add(tf.keras.layers.Dense(7, activation='softmax'))
-    model.compile(optimizer=tf.keras.optimizers.SGD(learning_rate=0.01, momentum=0.9), loss='binary_crossentropy', metrics=METRICS) # 
-    
+    model.compile(optimizer=tf.keras.optimizers.SGD(learning_rate=0.01, momentum=0.9), loss='binary_crossentropy', metrics=METRICS)
+
     for layer in model.layers[numLayersFreeze:]:
         layer.trainable =  True
 
-    # folder + '_' +
-    filepath = save_nets_path / methodName /  '_weights' / f"{partition}.hdf5"
+    filepath = paths['nets'] / methodName /  '_weights' / f"{partition}.hdf5"
     print(filepath)
     checkpoint = ModelCheckpoint(str(filepath), monitor='val_accuracy', verbose=0, save_best_only=True, mode='max')
     return model, checkpoint
 
 
-
-
 def predict_test(pred, test_under_Y, folders, methodName):
-    #y_pred_inception = np.array([np.argmax(p) for p in pred_inception.ravel()])
     y_pred_inception = np.argmax(pred, axis=1)
     y_true = np.argmax(test_under_Y, axis=1)
     y_pred_proba_inception = np.array([np.max(p) for p in pred.ravel()])
     
-    #fpr_inception, tpr_inception, _ = roc_curve(test_under_Y.ravel(), y_pred_proba_inception.ravel())
     data_inception = pd.DataFrame()
     
     tn, fp, fn, tp = confusion_matrix(y_true.ravel(), y_pred_inception.ravel(), labels=[0,1]).ravel()
@@ -362,15 +213,15 @@ def predict_test(pred, test_under_Y, folders, methodName):
     data_inception["TP"] = [tp]
     data_inception["AUC"] = [auc_incp]
     
-    if os.path.exists(os.path.join(save_csvs_path, methodName, '_refined_cm.csv')):
-        data_inception.to_csv(os.path.join(save_csvs_path, methodName,  '%s_cm_refined.csv'%(str(folders))), sep=',', mode='a', index=False, header=False)
+    if os.path.exists(os.path.join(paths['csvs'], methodName, '_refined_cm.csv')):
+        data_inception.to_csv(os.path.join(paths['csvs'], methodName,  '%s_cm_refined.csv'%(str(folders))), sep=',', mode='a', index=False, header=False)
     else:
-        data_inception.to_csv(os.path.join(save_csvs_path, methodName, '%s_cm_refined.csv'%(str(folders))), sep=',', index=False)
+        data_inception.to_csv(os.path.join(paths['csvs'], methodName, '%s_cm_refined.csv'%(str(folders))), sep=',', index=False)
         
     data_mobile_fpr_tpr = pd.DataFrame(columns=["FPR", "TPR"])
     data_mobile_fpr_tpr["FPR"], data_mobile_fpr_tpr["TPR"], _ = roc_curve(test_under_Y.ravel(), y_pred_proba_inception.ravel())
     
-    data_mobile_fpr_tpr.to_csv(os.path.join(save_csvs_path, methodName, '%s_fpr_tpr_refined.csv'%(str(folders))), sep=',', index=False)
+    data_mobile_fpr_tpr.to_csv(os.path.join(paths['csvs'], methodName, '%s_fpr_tpr_refined.csv'%(str(folders))), sep=',', index=False)
 
 
 
@@ -378,12 +229,10 @@ if __name__ == '__main__':
     for method in range(0, len(methodsNames)):
         methodName = methodsNames[method]
 
-        if not os.path.exists(save_csvs_path / methodName):
-            os.mkdir(save_csvs_path / methodName) 
-        
-        if not os.path.exists(save_nets_path / methodName):
-            os.makedirs(save_nets_path / methodName /  '_weights') # '_weights'
-        
+        if not os.path.exists(paths['csvs'] / methodName):
+            os.mkdir(paths['csvs'] / methodName) 
+            os.makedirs(paths['csvs']/ methodName /  '_weights') 
+
         cont = 1
 
         for partition in range(1, 101):
@@ -392,10 +241,10 @@ if __name__ == '__main__':
                     for freezePercentage in [0.3]: # 
                         print(bcolors.OKGREEN + f"{methodName}: Partition {partition} DenseNum {denseNum}, dropout {dropOut}, freezePercentage {freezePercentage} " + bcolors.ENDC)
 
-                        log_dir = save_csvs_path  /  methodName /  "log_" / datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+                        log_dir = paths['csvs']  /  methodName /  "log_" / datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
                         tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
 
-                        csv_logger = tf.keras.callbacks.CSVLogger(save_csvs_path /  methodName / f"{partition}-epoch-results.csv", separator=',', append=True)
+                        csv_logger = tf.keras.callbacks.CSVLogger(paths['csvs'] /  methodName / f"{partition}-epoch-results.csv", separator=',', append=True)
                     
                         
                         initModel, checkpoint = makemodel(partition, methodName, denseNum, dropOut, freezePercentage)
@@ -421,18 +270,18 @@ if __name__ == '__main__':
                         
 
                         dependencies = {
-                            'precision': precision,
-                            'recall': recall,
-                            'f1_score': f1_score,
-                            'specificity': specificity,
-                            'npv': npv,
-                            'mcc': mcc
+                            'precision': metrics.precision,
+                            'recall': metrics.recall,
+                            'f1_score': metrics.f1_score,
+                            'specificity': metrics.specificity,
+                            'npv': metrics.npv,
+                            'mcc': metrics.mcc
                         }
 
                         print(bcolors.OKCYAN + "Testing " + methodName + bcolors.ENDC)
                         # 
                 
-                        filepath = save_nets_path /  methodName / '_weights' / f"{partition}.hdf5"
+                        filepath = paths['csvs'] /  methodName / '_weights' / f"{partition}.hdf5"
                         model = load_model(filepath, custom_objects=dependencies)
                         start_test = time.time()
                         pred = model.predict(test_under_X)
@@ -444,4 +293,3 @@ if __name__ == '__main__':
                     
                         calculateMeasures(history_net, partition, methodName, denseNum, dropOut, freezePercentage, batch_size)
                         cont = cont + 1
-                        # calculateMeasuresTest(history_net, step, methodName)
