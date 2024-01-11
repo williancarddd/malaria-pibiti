@@ -10,7 +10,7 @@ def crop_images_with_percentage(csv_file_path, output_path, percentage):
     # Processamento de imagens para cada caso
     for i in range(len(casos)):
         pathName = casos['ImagePathName'][i]
-        nomeArquivo = output_path / 'DatasetOriginal' / pathName[8:]
+        nomeArquivo = output_path / 'DataSetOriginal' / pathName[8:]
 
         with Image.open(nomeArquivo) as img:
             # Calculando as coordenadas para o recorte com a porcentagem especificada
@@ -31,15 +31,21 @@ def crop_images_with_percentage(csv_file_path, output_path, percentage):
 
             # Salvar a imagem processada
             category = casos['ObjectsCategory'][i]
-            if category == "red blood cell":
-                filenameSave = output_path / 'Dataset01_'+percentage*100+'/images/Healthy' / f"{casos['Exame'][i]}-{casos['InstanciaExame'][i]}-{i}.bmp"
-            else:  # assumindo Plasmodium ou outro
-                filenameSave = output_path / 'Dataset01_'+percentage*100+'/images/Plasmodium' / f"{casos['Exame'][i]}-{casos['InstanciaExame'][i]}-{i}.bmp"
-
+            pathToFile = str(output_path) +"/"+ 'Dataset01_'+str(percentage*100) +"/"+ "images" +"/"
+            if (not os.path.exists(pathToFile)):
+                os.makedirs(pathToFile)
+            filenameSave = pathToFile + f"{casos['Exame'][i]}-{casos['InstanciaExame'][i]}-{i}-{category}.bmp"  
             rgbCropped.save(filenameSave)
 
 
-path_project = Path().absolute().parent / '1_entrada'
-csv_file = path_project / "balanceado.csv"
-output_path = Path().absolute()
-crop_images_with_percentage(csv_file, output_path, 0.8)
+path_project = Path() / '1_entrada'
+csv_file =  "balanceado.csv"
+output_path = Path().absolute().parent / "1_entrada"
+
+# Porcentagens para gerar ROIs
+percentages = [1, 0.95,  0.9 , 0.85, 0.8, 0.75, 0.7, 0.65, 0.6, 0.55, 0.5, 0.45,  0.4 , 0.35,  0.3 ,0.25, 0.2, 0.15, 0.1, 0.05]
+
+# Gerar ROIs para cada porcentagem
+for percentage in percentages:
+    crop_images_with_percentage(csv_file, output_path, percentage)
+    print("Imagens feitas para " + percentage*100)

@@ -1,11 +1,13 @@
 import json
 import pandas as pd
 from pathlib import Path
+from pattern import pattern_class
 
-path_project = Path().absolute().parent
+
+path_project = Path().absolute()
 # Caminho para os arquivos
-test_file = path_project / "1_entrada/test.json"
-train_file = path_project / "1_entrada/training.json"
+test_file = path_project / "1_entrada" / "test.json"
+train_file = path_project / "1_entrada" / "training.json"
 
 # Função para processar os dados JSON
 def process_json(file_name, is_test=True):
@@ -26,7 +28,7 @@ def process_json(file_name, is_test=True):
                 'ImageShapeR': image_info['shape']['r'],
                 'ImageShapeC': image_info['shape']['c'],
                 'ImageShapeChannels': image_info['shape']['channels'],
-                'ObjectsCategory': obj['category'],
+                'ObjectsCategory': pattern_class[obj['category']],
                 'ObjectsBoundingBoxMinimumR': obj['bounding_box']['minimum']['r'],
                 'ObjectsBoundingBoxMinimumC': obj['bounding_box']['minimum']['c'],
                 'ObjectsBoundingBoxMaximumR': obj['bounding_box']['maximum']['r'],
@@ -48,4 +50,4 @@ cases_df = pd.DataFrame(all_data)
 cases_df = cases_df.sort_values(by='Exame')
 
 # Salvar como CSV
-cases_df.to_csv('casos.csv', index=False)
+cases_df.to_csv(path_project / "2_pre_processamento" / 'casos.csv', index=False)

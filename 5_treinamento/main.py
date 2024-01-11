@@ -1,5 +1,6 @@
 import tensorflow as tf
 import os, logging, datetime, time
+from tensorflow import keras
 from config.config import Config
 from classes.paths import Paths
 from classes.colors import bcolors
@@ -7,8 +8,8 @@ from classes.model.model_building import ModelBuilding
 from classes.metrics import Metrics
 from classes.data.data_processor import DataSetProcessor
 from classes.model.test_model import TestModel 
-from tensorflow.keras.callbacks import  ReduceLROnPlateau
-from tensorflow.keras.models import load_model
+from keras.callbacks import  ReduceLROnPlateau
+from keras.models import load_model
 
 if __name__ == '__main__':
 
@@ -33,8 +34,7 @@ if __name__ == '__main__':
       for indicePartition, partitionName in enumerate(range(1, 101)):
 
         paths = Paths(methodName=methodName, dataSetName=dataSetName)
-        if(os.path.exists(paths.get_project_paths()['project'])):
-          continue # porcamente uma validação para não refazer tudo novamente , apenas o que precisar
+       
         metrics = Metrics(paths=paths, bgColors=bcolors)
         dataProcessor = DataSetProcessor(paths=paths, config=configMain)
         necessaryPath = paths.get_project_paths()

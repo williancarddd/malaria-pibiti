@@ -3,3 +3,5 @@ pillow
 pandas
 numpy
 scikit-learn
+tensorflow[and-cuda]
+tensorflow

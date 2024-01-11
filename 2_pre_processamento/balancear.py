@@ -2,15 +2,17 @@ import pandas as pd
 import numpy as np
 import os
 from pathlib import Path
+from pattern import pattern_class
+
 # Caminho para o arquivo
 path_project = Path().absolute()
-csv_file = path_project / "casos.csv"
+csv_file = path_project / '2_pre_processamento' / "casos.csv"
 
 # Lendo o arquivo CSV
 casos = pd.read_csv(csv_file)
 
 # Selecionando casos que não são células sanguíneas vermelhas
-infectados = casos[casos['ObjectsCategory'] != "red blood cell"]
+infectados = casos[casos['ObjectsCategory']!= pattern_class["red blood cell"]]
 
 # Obtendo exames únicos dos casos infectados
 unicos = infectados['Exame'].unique()
@@ -22,10 +24,10 @@ for exame in unicos:
     num_infectados = len(infectados[infectados['Exame'] == exame])
 
     #número igual de células sanguíneas vermelhas
-    celulas_saudaveis = casos[(casos['ObjectsCategory'] == "red blood cell") & (casos['Exame'] == exame)].head(num_infectados)
+    celulas_saudaveis = casos[(casos['ObjectsCategory'] == pattern_class["red blood cell"]) & (casos['Exame'] == exame)].head(num_infectados)
 
     # Adicionando ao conjunto balanceado
     infectados_balanceados = pd.concat([infectados_balanceados, infectados[infectados['Exame'] == exame], celulas_saudaveis])
 
 # Salvando o conjunto de dados balanceado em um novo arquivo CSV
-infectados_balanceados.to_csv(os.path.join(path_project, 'balanceado.csv'), index=False)
+infectados_balanceados.to_csv(os.path.join(path_project / '2_pre_processamento' /  'balanceado.csv'), index=False)
