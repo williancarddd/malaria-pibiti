@@ -45,5 +45,5 @@ for k in range(1, 101):
     tb = pd.DataFrame({'Image': Image, 'Class': Class, 'Train': Train, 'Test': Test})
 
     # Salvando a tabela em um arquivo CSV
-    filename = os.path.join(partitions_path, f'{k:02d}.csv')
+    filename = os.path.join(partitions_path, f'{k}.csv')
     tb.to_csv(filename, index=False)

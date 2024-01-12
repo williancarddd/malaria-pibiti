@@ -44,10 +44,7 @@ if __name__ == '__main__':
             for indiceDropOutNum, dropOutNum in enumerate(configMain.get_drop_out()):
               for indiceFreezePercentege, freezePercentege in enumerate(configMain.get_freeze_percentage()):
 
-                dnv = bcolors.OKGREEN + f"DataSetName: {dataSetName}\
-                      {methodName}: Partition {partitionName}\
-                      DenseNum {denseNum}, dropout {dropOutNum},\
-                      freezePercentage {freezePercentege} " + bcolors.ENDC
+                dnv = bcolors.OKGREEN + f"DataSetName: {dataSetName} {methodName}: Partition {partitionName} DenseNum {denseNum}, dropout {dropOutNum}, freezePercentage {freezePercentege} " + bcolors.ENDC
                 print(dnv)
                 logging.debug(dnv)
 
@@ -128,6 +125,7 @@ if __name__ == '__main__':
                                             configCnn['batch_size'], 
                                             runtimeTest=runtimeTest, 
                                             runtimeTrain=runtimeTrain)
+                  logging.debug(f"Testes finalizado  {methodName} para {dataSetName}")
                 except Exception as e:
                   logging.error(f"Error na parte de testes {methodName} para {dataSetName} {e}")
                   

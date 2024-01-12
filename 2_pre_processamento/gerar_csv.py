@@ -4,7 +4,9 @@ from pathlib import Path
 from pattern import pattern_class
 
 
-path_project = Path().absolute()
+path_project = Path().absolute().parent
+#linux
+#path_project = Path().absolute()
 # Caminho para os arquivos
 test_file = path_project / "1_entrada" / "test.json"
 train_file = path_project / "1_entrada" / "training.json"

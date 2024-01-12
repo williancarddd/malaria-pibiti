@@ -17,7 +17,7 @@ def crop_images_with_percentage(csv_file_path, output_path, percentage):
             minC, minR, maxC, maxR = casos.loc[i, ['ObjectsBoundingBoxMinimumC', 'ObjectsBoundingBoxMinimumR', 'ObjectsBoundingBoxMaximumC', 'ObjectsBoundingBoxMaximumR']]
             rect_width = maxC - minC
             rect_height = maxR - minR
-
+            # dminiui em retangulos
             new_width = rect_width * percentage
             new_height = rect_height * percentage
 
@@ -47,5 +47,5 @@ percentages = [1, 0.95,  0.9 , 0.85, 0.8, 0.75, 0.7, 0.65, 0.6, 0.55, 0.5, 0.45,
 
 # Gerar ROIs para cada porcentagem
 for percentage in percentages:
+    print("Imagens feitas para " + str(percentage*100))
     crop_images_with_percentage(csv_file, output_path, percentage)
-    print("Imagens feitas para " + percentage*100)

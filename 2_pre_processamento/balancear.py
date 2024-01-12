@@ -6,7 +6,11 @@ from pattern import pattern_class
 
 # Caminho para o arquivo
 path_project = Path().absolute()
-csv_file = path_project / '2_pre_processamento' / "casos.csv"
+
+#linux
+#csv_file = path_project / '2_pre_processamento' / "casos.csv"
+
+csv_file = path_project /  "casos.csv"
 
 # Lendo o arquivo CSV
 casos = pd.read_csv(csv_file)
@@ -30,4 +34,7 @@ for exame in unicos:
     infectados_balanceados = pd.concat([infectados_balanceados, infectados[infectados['Exame'] == exame], celulas_saudaveis])
 
 # Salvando o conjunto de dados balanceado em um novo arquivo CSV
-infectados_balanceados.to_csv(os.path.join(path_project / '2_pre_processamento' /  'balanceado.csv'), index=False)
+infectados_balanceados.to_csv(os.path.join(path_project /   'balanceado.csv'), index=False)
+
+#linux
+#infectados_balanceados.to_csv(os.path.join(path_project / '2_pre_processamento' /  'balanceado.csv'), index=False)
