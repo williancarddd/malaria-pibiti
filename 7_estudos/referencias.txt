@@ -1,0 +1,9 @@
+https://blog.paperspace.com/checkpointing-in-tensorflow/amp/
+
+https://builtin.com/data-science/transfer-learning
+
+https://datascience.stackexchange.com/questions/58932/can-we-use-binary-cross-entropy-for-multiclass-classification
+
+https://cs230.stanford.edu/projects_spring_2021/reports/43.pdf
+
+https://scholar.google.com.br/scholar?q=binary_crossentropy+for+multiclass+classification&hl=pt-BR&as_sdt=0&as_vis=1&oi=scholart

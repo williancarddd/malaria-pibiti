@@ -1,6 +1,7 @@
-import tensorflow as tf
 import math
+import tensorflow as tf
 from tensorflow.keras.callbacks import ModelCheckpoint
+from tensorflow.keras.losses import CategoricalCrossentropy
 from config.config import Config
 from classes.paths import Paths
 from classes.metrics import Metrics
@@ -44,7 +45,7 @@ class ModelBuilding:
         ])
 
         model.compile(optimizer=tf.keras.optimizers.SGD(learning_rate=0.01, momentum=0.9),
-                      loss='binary_crossentropy',
+                      loss=CategoricalCrossentropy(),
                       metrics=metrics.get_metrics())
 
         filepath = paths.get_nets_path(partition)
