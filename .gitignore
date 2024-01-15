@@ -252,7 +252,6 @@ pip-selfcheck.json
 /1_entrada/**/*.png
 /1_entrada/**/images/*.bpm
 /3_processamento/**/*.csv
-/2_pre_processamento/*.csv
 /pibiti_malaria
 
 /1_entrada/Dataset01/*
@@ -281,6 +280,6 @@ pip-selfcheck.json
 /1_entrada/Dataset01_95.0
 /1_entrada/Dataset01_100
 /1_entrada/DataSetOriginal
-/1_entrada/partitions
+
 /6_resultados
 cuda-repo-ubuntu2204-12-3-local_12.3.2-545.23.08-1_amd64.deb

@@ -311,6 +311,7 @@ def makemodel(folder, methodName, denseNum, dropOut, freezePercentage):
     for layer in base_model.layers[:numLayersFreeze]:
         layer.trainable =  False
     
+    
     model = tf.keras.models.Sequential()
     model.add(base_model)
     model.add(tf.keras.layers.GlobalAveragePooling2D())

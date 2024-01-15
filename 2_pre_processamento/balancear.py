@@ -16,7 +16,7 @@ csv_file = path_project /  "casos.csv"
 casos = pd.read_csv(csv_file)
 
 # Selecionando casos que não são células sanguíneas vermelhas
-infectados = casos[casos['ObjectsCategory']!= pattern_class["red blood cell"]]
+infectados = casos[casos['ObjectsCategory'] == 1 ] # está infectada
 
 # Obtendo exames únicos dos casos infectados
 unicos = infectados['Exame'].unique()
@@ -28,7 +28,7 @@ for exame in unicos:
     num_infectados = len(infectados[infectados['Exame'] == exame])
 
     #número igual de células sanguíneas vermelhas
-    celulas_saudaveis = casos[(casos['ObjectsCategory'] == pattern_class["red blood cell"]) & (casos['Exame'] == exame)].head(num_infectados)
+    celulas_saudaveis = casos[(casos['ObjectsCategory'] == 0) & (casos['Exame'] == exame)].head(num_infectados)
 
     # Adicionando ao conjunto balanceado
     infectados_balanceados = pd.concat([infectados_balanceados, infectados[infectados['Exame'] == exame], celulas_saudaveis])
