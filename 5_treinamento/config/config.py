@@ -23,7 +23,10 @@ class Config:
         self.drop_out = [0.3]
 
         # datasets images percentage
-        self.data_set_names = ['Dataset01_95.0']
+        self.data_set_names = ['Dataset01_100', 'Dataset01_95.0',  'Dataset01_90.0',  'Dataset01_85.0' , 'Dataset01_80.0',
+                                 'Dataset01_75.0',  'Dataset01_70.0',  'Dataset01_65.0',  'Dataset01_60.0',  'Dataset01_55.0',
+                                  'Dataset01_50.0',  'Dataset01_45.0',  'Dataset01_40.0',  'Dataset01_35.0',  'Dataset01_30.0',
+                                   'Dataset01_25.0',  'Dataset01_20.0',  'Dataset01_15.0',  'Dataset01_10.0',  'Dataset01_5.0']
         
         #nClasses
         self.n_classes = 7
