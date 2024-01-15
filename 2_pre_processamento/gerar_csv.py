@@ -21,7 +21,7 @@ def process_json(file_name, is_test=True):
         image_info = item['image']
         for j, obj in enumerate(item['objects']):
             isInfected = 1
-            if(pattern_class[obj['category']] != 6 ):
+            if(pattern_class[obj['category']] == 6 ):
                 isInfected = 0 # não tá infectada
             exam_info = {
                 'Exame': i + 1,

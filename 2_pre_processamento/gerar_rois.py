@@ -1,23 +1,24 @@
 import pandas as pd
-from PIL import Image
+from PIL import Image, ImageDraw
 import numpy as np
 import os
 from pathlib import Path
 
-def crop_images_with_percentage(csv_file_path, output_path, percentage):
+def mask_images_with_percentage(csv_file_path, output_path, percentage):
     casos = pd.read_csv(csv_file_path)
 
-    # Processamento de imagens para cada caso
     for i in range(len(casos)):
         pathName = casos['ImagePathName'][i]
         nomeArquivo = output_path / 'DataSetOriginal' / pathName[8:]
 
         with Image.open(nomeArquivo) as img:
-            # Calculando as coordenadas para o recorte com a porcentagem especificada
+            # Cria uma cópia da imagem que será a máscara
+            mask = Image.new('RGB', img.size, (0, 0, 0))
+
+            # Calcula as coordenadas para a área a ser mantida com base na porcentagem
             minC, minR, maxC, maxR = casos.loc[i, ['ObjectsBoundingBoxMinimumC', 'ObjectsBoundingBoxMinimumR', 'ObjectsBoundingBoxMaximumC', 'ObjectsBoundingBoxMaximumR']]
             rect_width = maxC - minC
             rect_height = maxR - minR
-            # dminiui em retangulos
             new_width = rect_width * percentage
             new_height = rect_height * percentage
 
@@ -26,16 +27,19 @@ def crop_images_with_percentage(csv_file_path, output_path, percentage):
             right = maxC - (rect_width - new_width) / 2
             bottom = maxR - (rect_height - new_height) / 2
 
-            rect = (left, top, right, bottom)
-            rgbCropped = img.crop(rect)
+            # Copia a área relevante da imagem original para a máscara
+            cropped = img.crop((left, top, right, bottom))
+            resized_cropped = cropped.resize((128, 128)) # Redimensiona para 128x128
+
+            mask.paste(resized_cropped, (int(left), int(top)))
 
             # Salvar a imagem processada
             category = casos['ObjectsCategory'][i]
-            pathToFile = str(output_path) +"/"+ 'Dataset01_'+str(percentage*100) +"/"+ "images" +"/"
-            if (not os.path.exists(pathToFile)):
+            pathToFile = str(output_path) + "/" + 'Dataset01_' + str(percentage * 100) + "/" + "images" + "/"
+            if not os.path.exists(pathToFile):
                 os.makedirs(pathToFile)
-            filenameSave = pathToFile + f"{casos['Exame'][i]}-{casos['InstanciaExame'][i]}-{i}-{category}.bmp"  
-            rgbCropped.save(filenameSave)
+            filenameSave = pathToFile + f"{casos['Exame'][i]}-{casos['InstanciaExame'][i]}-{i}-{category}.bmp"
+            resized_cropped.save(filenameSave) # Salva a imagem redimensionada
 
 
 path_project = Path() / '1_entrada'
@@ -48,4 +52,4 @@ percentages = [1, 0.95,  0.9 , 0.85, 0.8, 0.75, 0.7, 0.65, 0.6, 0.55, 0.5, 0.45,
 # Gerar ROIs para cada porcentagem
 for percentage in percentages:
     print("Imagens feitas para " + str(percentage*100))
-    crop_images_with_percentage(csv_file, output_path, percentage)
+    mask_images_with_percentage(csv_file, output_path, percentage)
