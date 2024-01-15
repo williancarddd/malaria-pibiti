@@ -26,7 +26,7 @@ class Config:
         self.data_set_names = ['Dataset01_95.0']
         
         #nClasses
-        self.n_classes = 7
+        self.n_classes = 2
 
     def get_cnn_config(self) -> dict:
         """Returns the configuration for the CNN."""

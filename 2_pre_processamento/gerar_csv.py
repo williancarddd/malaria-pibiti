@@ -20,6 +20,9 @@ def process_json(file_name, is_test=True):
     for i, item in enumerate(data):
         image_info = item['image']
         for j, obj in enumerate(item['objects']):
+            isInfected = 1
+            if(pattern_class[obj['category']] != 6 ):
+                isInfected = 0 # não tá infectada
             exam_info = {
                 'Exame': i + 1,
                 'Teste': is_test,
@@ -30,7 +33,7 @@ def process_json(file_name, is_test=True):
                 'ImageShapeR': image_info['shape']['r'],
                 'ImageShapeC': image_info['shape']['c'],
                 'ImageShapeChannels': image_info['shape']['channels'],
-                'ObjectsCategory': pattern_class[obj['category']],
+                'ObjectsCategory': isInfected,
                 'ObjectsBoundingBoxMinimumR': obj['bounding_box']['minimum']['r'],
                 'ObjectsBoundingBoxMinimumC': obj['bounding_box']['minimum']['c'],
                 'ObjectsBoundingBoxMaximumR': obj['bounding_box']['maximum']['r'],

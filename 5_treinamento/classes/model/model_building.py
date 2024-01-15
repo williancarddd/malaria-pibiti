@@ -1,7 +1,7 @@
 import math
 import tensorflow as tf
 from tensorflow.keras.callbacks import ModelCheckpoint
-from tensorflow.keras.losses import CategoricalCrossentropy
+from tensorflow.keras.losses import BinaryCrossentropy
 from config.config import Config
 from classes.paths import Paths
 from classes.metrics import Metrics
@@ -41,11 +41,11 @@ class ModelBuilding:
             tf.keras.layers.BatchNormalization(),
             tf.keras.layers.Flatten(),
             tf.keras.layers.Dropout(dropOut),
-            tf.keras.layers.Dense(nClasses, activation='softmax')
+            tf.keras.layers.Dense(nClasses, activation='sigmoid')
         ])
 
         model.compile(optimizer=tf.keras.optimizers.SGD(learning_rate=0.01, momentum=0.9),
-                      loss=CategoricalCrossentropy(),
+                      loss=BinaryCrossentropy(),
                       metrics=metrics.get_metrics())
 
         filepath = paths.get_nets_path(partition)
