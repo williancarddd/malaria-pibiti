@@ -6,6 +6,22 @@ from keras import backend as K
 from classes.paths import Paths
 from classes.colors import bcolors
 
+
+"""
+Verdadeiro Positivo (TP): Valores que são realmente positivos e positivos previstos .
+Falso Positivo (FP): Valores que são realmente negativos , mas previstos como positivos .
+Falso Negativo (FN): Valores que são realmente positivos , mas previstos como negativos.
+Verdadeiro Negativo (TN): Valores que são realmente negativos e previstos como negativos.
+
+Taxa de verdadeiro positivo (TPR): verdadeiro positivo/positivo
+
+Taxa de falso positivo (FPR): falso positivo/negativo
+
+Taxa de falso negativo (FNR): falso negativo/positivo
+
+Taxa Verdadeira Negativa (TNR): Verdadeiro Negativo/Negativo
+
+"""
 class Metrics:
   #functions metrics personalized
     def __init__(self, paths: Paths, bgColors: bcolors) -> None:

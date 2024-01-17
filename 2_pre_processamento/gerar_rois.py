@@ -12,10 +12,7 @@ def mask_images_with_percentage(csv_file_path, output_path, percentage):
         nomeArquivo = output_path / 'DataSetOriginal' / pathName[8:]
 
         with Image.open(nomeArquivo) as img:
-            # Cria uma cópia da imagem que será a máscara
-            mask = Image.new('RGB', img.size, (0, 0, 0))
-
-            # Calcula as coordenadas para a área a ser mantida com base na porcentagem
+            # Calcula as coordenadas para a área a ser cortada com base na porcentagem
             minC, minR, maxC, maxR = casos.loc[i, ['ObjectsBoundingBoxMinimumC', 'ObjectsBoundingBoxMinimumR', 'ObjectsBoundingBoxMaximumC', 'ObjectsBoundingBoxMaximumR']]
             rect_width = maxC - minC
             rect_height = maxR - minR
@@ -24,14 +21,22 @@ def mask_images_with_percentage(csv_file_path, output_path, percentage):
 
             left = minC + (rect_width - new_width) / 2
             top = minR + (rect_height - new_height) / 2
-            right = maxC - (rect_width - new_width) / 2
-            bottom = maxR - (rect_height - new_height) / 2
+            right = left + new_width
+            bottom = top + new_height
 
-            # Copia a área relevante da imagem original para a máscara
+            # Corta a imagem original
             cropped = img.crop((left, top, right, bottom))
-            resized_cropped = cropped.resize((128, 128)) # Redimensiona para 128x128
 
-            mask.paste(resized_cropped, (int(left), int(top)))
+            # Cria uma máscara preta de 128x128
+            mask = Image.new('RGB', (128, 128), (0, 0, 0))
+
+            # Calcula o posicionamento do corte na máscara
+            x_offset = int((128 - cropped.size[0]) / 2)
+            y_offset = int((128 - cropped.size[1]) / 2)
+
+            # Cola a imagem cortada na máscara
+            mask.paste(cropped, (x_offset, y_offset))
+
 
             # Salvar a imagem processada
             category = casos['ObjectsCategory'][i]
@@ -39,7 +44,7 @@ def mask_images_with_percentage(csv_file_path, output_path, percentage):
             if not os.path.exists(pathToFile):
                 os.makedirs(pathToFile)
             filenameSave = pathToFile + f"{casos['Exame'][i]}-{casos['InstanciaExame'][i]}-{i}-{category}.bmp"
-            resized_cropped.save(filenameSave) # Salva a imagem redimensionada
+            mask.save(filenameSave) # Salva a imagem redimensionada
 
 
 path_project = Path() / '1_entrada'
