@@ -282,5 +282,5 @@ pip-selfcheck.json
 /1_entrada/DataSetOriginal
 
 /6_resultados/**/**/metrics/_weigths
-/6_resultados/**/**/metrics/csvs
+
 cuda-repo-ubuntu2204-12-3-local_12.3.2-545.23.08-1_amd64.deb
