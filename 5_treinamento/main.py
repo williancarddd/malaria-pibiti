@@ -117,7 +117,7 @@ if __name__ == '__main__':
                   print("Completed: %s Percent"%(partitionName) + bcolors.ENDC)
                   testModel.predict_test(pred, test_under_Y, methodName)
                   metrics.calculateMeasures(history_net, 
-                                            necessaryPath['metrics'], 
+                                            int(float(dataSetName.split("_")[1])), 
                                             methodName, 
                                             denseNum, 
                                             dropOutNum, 

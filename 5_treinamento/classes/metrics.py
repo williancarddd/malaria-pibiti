@@ -87,7 +87,7 @@ class Metrics:
         metrics = pd.DataFrame()
         idx = np.argmax(history_net.history['val_accuracy'])
 
-        metrics['folder'] = [folder]
+        metrics['dataset'] = [folder]
         metrics['network'] = [methodName]
         metrics['DenseNum'] = [denseNum]
         metrics['DropOut'] = [dropOut]
@@ -131,6 +131,9 @@ class Metrics:
         rName = os.path.join(refined, methodName + "_refined" + ".csv" )
         metrics.to_csv(rName, sep=',', mode='a', index=False)  
 
-
+        if os.path.exists(rName):
+         metrics.to_csv(rName, sep=',', mode='a', index=False, header=False)
+        else:
+         metrics.to_csv(rName, sep=',', index=False)  
     def get_metrics(self):
         return  self.METRICS
