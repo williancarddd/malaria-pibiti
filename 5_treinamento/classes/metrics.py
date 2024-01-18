@@ -129,7 +129,7 @@ class Metrics:
 
         refined = self.paths.get_refined_path()
         rName = os.path.join(refined, methodName + "_refined" + ".csv" )
-        metrics.to_csv(rName, sep=',', index=False)  
+        metrics.to_csv(rName, sep=',', mode='a', index=False)  
 
 
     def get_metrics(self):
