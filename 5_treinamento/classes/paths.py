@@ -39,9 +39,9 @@ class Paths:
           "test": self.save_test 
       }
 
-  def get_nets_path(self, partition: str):
+  def get_nets_path(self, methodName: str):
      
-     return str(self.save_nets_path_weigths / f'{partition}.hdf5')
+     return str(self.save_nets_path_weigths / f'{methodName}.hdf5')
   
   def get_csv_path(self):
      return str(self.save_csvs_path)

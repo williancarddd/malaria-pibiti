@@ -4,7 +4,7 @@ import tensorflow as tf
 class Config:
     def __init__(self):
         # CNN CONFIG
-        self.batch_size = 16
+        self.batch_size = 64
         self.input_shape = (128, 128, 3)
         self.input_shape_crop_or_pad = (128, 128, 3)
         self.alpha = 1e-6

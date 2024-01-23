@@ -48,7 +48,7 @@ class ModelBuilding:
                       loss=BinaryCrossentropy(),
                       metrics=metrics.get_metrics())
 
-        filepath = paths.get_nets_path(partition)
-        checkpoint = ModelCheckpoint(filepath, monitor='val_accuracy', verbose=0, save_best_only=True, mode='max')
+        filepath = paths.get_nets_path(methodName)
+        checkpoint = ModelCheckpoint(filepath, monitor='val_accuracy', verbose=1, save_best_only=True, mode='max')
 
         return model, checkpoint
