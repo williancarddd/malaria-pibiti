@@ -104,7 +104,7 @@ if __name__ == '__main__':
         logging.debug(dnvvvv)
 
         try:
-          filepath = paths.get_nets_path(partitionName)
+          filepath = paths.get_nets_path(methodName)
           model = load_model(filepath, custom_objects=dependencies)
           start_test = time.time()
           pred = model.predict(test_under_X)
