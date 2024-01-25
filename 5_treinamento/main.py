@@ -36,7 +36,7 @@ if __name__ == '__main__':
       for indicePartition, partitionName in enumerate(range(1, 101)):
 
         paths = Paths(methodName=methodName, dataSetName=dataSetName)
-       
+
         metrics = Metrics(paths=paths, bgColors=bcolors)
         dataProcessor = DataSetProcessor(paths=paths, config=configMain)
         necessaryPath = paths.get_project_paths()
