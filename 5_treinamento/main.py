@@ -36,7 +36,7 @@ if __name__ == '__main__':
       for indicePartition, partitionName in enumerate(range(1, 101)):
 
         paths = Paths(methodName=methodName, dataSetName=dataSetName)
-       
+
         metrics = Metrics(paths=paths, bgColors=bcolors)
         dataProcessor = DataSetProcessor(paths=paths, config=configMain)
         necessaryPath = paths.get_project_paths()
@@ -104,7 +104,7 @@ if __name__ == '__main__':
         logging.debug(dnvvvv)
 
         try:
-          filepath = paths.get_nets_path(partitionName)
+          filepath = paths.get_nets_path(methodName)
           model = load_model(filepath, custom_objects=dependencies)
           start_test = time.time()
           pred = model.predict(test_under_X)
