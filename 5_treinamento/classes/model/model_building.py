@@ -23,6 +23,7 @@ class ModelBuilding:
             "MobileNetV2": tf.keras.applications.MobileNetV2,
             "DenseNet201": tf.keras.applications.DenseNet201,
             "InceptionV3": tf.keras.applications.InceptionV3,
+            "ResNet50": tf.keras.applications.ResNet50
             # Add other models as needed
         }
         if methodName not in model_constructors:
