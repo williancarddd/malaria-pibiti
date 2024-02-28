@@ -1,0 +1,3 @@
+ID,Image,Mask,Label,
+T12-T1,H:\My Drive\Doutorado\BaseColuna\segmentations\65\65-SAG-T1-8Bits.nii,H:\My Drive\Doutorado\BaseColuna\segmentations\65\65-SAG-T1-8Bits-T12.nrrd,test,
+T12-T2,H:\My Drive\Doutorado\BaseColuna\segmentations\65\65-SAG-T2-8Bits.nii,H:\My Drive\Doutorado\BaseColuna\segmentations\65\65-SAG-T2-8Bits-T12.nrrd,test,
