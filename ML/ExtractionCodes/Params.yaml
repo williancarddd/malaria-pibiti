@@ -11,8 +11,6 @@ featureClass: # https://pyradiomics.readthedocs.io/en/latest/features.html
   glrlm:        # Grey-level run length matrix (16 features)
   glszm:        # Gray level size zone matrix (16 features)
   ngtdm:        # Neighbouring Gray Tone Difference (5 features)
-  shape:        # Shape features (19 features) (16 features)
-                # TOTAL: 110 features
 
 setting:
   preCrop: true                    # CROP VOI TO REDUCE PROCESSING TIME
