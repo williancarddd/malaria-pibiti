@@ -22,6 +22,7 @@ infectados = casos[casos['ObjectsCategory'] == 1 ] # está infectada
 unicos = infectados['Exame'].unique()
 infectados_balanceados = pd.DataFrame()
 
+print(len(unicos))
 # Balanceando os dados
 for exame in unicos:
     # Contando o número de casos infectados para este exame
@@ -35,6 +36,6 @@ for exame in unicos:
 
 # Salvando o conjunto de dados balanceado em um novo arquivo CSV
 infectados_balanceados.to_csv(os.path.join(path_project /   'balanceado.csv'), index=False)
-
+print(infectados_balanceados['ObjectsCategory'].value_counts())
 #linux
 #infectados_balanceados.to_csv(os.path.join(path_project / '2_pre_processamento' /  'balanceado.csv'), index=False)
