@@ -69,7 +69,7 @@ os.environ['TF_FORCE_GPU_ALLOW_GROWTH'] = 'true'
 os.environ['CUDA_VISIBLE_DEVICES'] = "1"
 
 ##Variaveis globais
-save_metrics_path = "../Datasets/DatasetBalanced2/Results/csvs/"
+save_metrics_path = "/media/william/NVME/projects/malaria-pibiti/6_resultados"
 base_path_parts = "../Datasets/DatasetBalanced2/Features/"
 files_parts = os.listdir(base_path_parts)
 input_size = (80,80)
@@ -547,7 +547,7 @@ def train_ml_algorithm(X_train, y_train, methodName):
         results = search.fit(X_train, y_train.ravel())
 
     return results
-    
+    LinearDiscriminantAnalysis
 
 def save_parts_proc(part):
     with open(os.path.join(save_metrics_path, "TraditionalML/parts.txt"), mode="a") as f:
