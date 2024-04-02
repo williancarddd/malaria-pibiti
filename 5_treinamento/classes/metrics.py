@@ -94,7 +94,7 @@ class Metrics:
         metrics['FreezePercentage'] = [freezePercentage]
         metrics['BatchSize'] = [batchsize]
 
-        # TEST RESULTS
+        # TRAINING RESULTS
         metrics['epoch'] = [idx]
         metrics['accuracy'] = history_net.history['accuracy'][idx]
         metrics['precision'] = history_net.history['precision'][idx]
@@ -110,7 +110,7 @@ class Metrics:
         metrics['FN'] = history_net.history['FN'][idx]
         metrics['runtime'] = [runtimeTrain]
 
-        # TRAIN RESULTS
+        # VALIDATION RESULTS
         metrics['val_accuracy'] = history_net.history['val_accuracy'][idx]
         metrics['val_precision'] = history_net.history['val_precision'][idx]
         metrics['val_sensitivity'] = history_net.history['val_recall'][idx]
