@@ -1,0 +1,15 @@
+name: malaria-pibiti
+
+channels:
+  - defaults
+  - conda-forge
+
+dependencies:
+  - python=3.8
+  - tensorflow
+  - numpy
+  - scipy
+  - scikit-learn
+  - seaborn
+  - matplotlib
+  - jupyter
