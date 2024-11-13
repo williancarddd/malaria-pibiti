@@ -40,7 +40,7 @@ csv_file =  "balanceado.csv"
 output_path = Path().absolute().parent / "1_entrada"
 # Porcentagens para gerar ROIs
 #[1, 0.95,  0.9 , 0.85, 0.8, 0.75,
-percentages = [ 0.7, 0.65, 0.6, 0.55, 0.5, 0.45,  0.4 , 0.35,  0.3 ,0.25, 0.2, 0.15, 0.1, 0.05]
+percentages = [ 0.75 ]
 # Gerar ROIs para cada porcentagem
 for percentage in percentages:
     print("Imagens feitas para " + str(percentage*100))

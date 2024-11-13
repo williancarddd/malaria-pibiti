@@ -1,0 +1,13 @@
+network,max_acceptable_roi
+DenseNet201,100.0
+MobileNetV2,100.0
+InceptionV3,100.0
+ResNet50,100.0
+GradientBoostingf,100.0
+GradientBoosting,100.0
+KNNf,100.0
+KNN,100.0
+NBayes,100.0
+NBayesf,100.0
+RandomForestf,100.0
+RandomForest,100.0
