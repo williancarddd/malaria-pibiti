@@ -1,0 +1,13 @@
+network,Percentage
+NBayesf,100.0
+RandomForest,100.0
+GradientBoosting,95.0
+GradientBoostingf,95.0
+RandomForestf,95.0
+KNN,90.0
+KNNf,90.0
+ResNet50,65.0
+MobileNetV2,40.0
+DenseNet201,30.0
+InceptionV3,30.0
+NBayes,25.0
